@@ -1,26 +1,12 @@
 #include "config.h"
 
-const int WIDTH = 800;
-const int HEIGHT = 600;
-
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 void processInput(GLFWwindow *window);
 
-const char *vertexShaderSource = "#version 330 core\n"
-                                 "layout (location = 0) in vec2 aPos;\n"
-                                 "void main()\n"
-                                 "{\n"
-                                 "   gl_Position = vec4(aPos.x,aPos.y, 0.0, 1.0);\n"
-                                 "}\0";
-const char *fragmentShaderSource = "#version 330 core\n"
-                                   "out vec4 FragColor;\n"
-                                   "void main()\n"
-                                   "{\n"
-                                   "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                                   "}\n\0";
+std::string loadShaderSourceFromFile(const std::string &filepath);
 
 static int shaderCompileStatus(GLuint shader)
 {
@@ -85,6 +71,17 @@ int main()
     }
 
     // shaders
+    // Read shader sources
+    std::string vertexCode = loadShaderSourceFromFile(vertexShaderPath);
+    std::string fragmentCode = loadShaderSourceFromFile(fragmentShaderPath);
+
+    if (vertexCode.empty() || fragmentCode.empty())
+    {
+        std::cerr << "Failed to load shader files!" << std::endl;
+        return -1;
+    }
+    const char *vertexShaderSource = vertexCode.c_str();
+    const char *fragmentShaderSource = fragmentCode.c_str();
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -199,4 +196,24 @@ static int createShader(const std::string &vertexShaderSource, const std::string
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     return program;
+}
+
+std::string loadShaderSourceFromFile(const std::string &filepath)
+{
+    std::ifstream file;
+    std::stringstream fileStream;
+
+    // Ensure ifstream throws exceptions
+    file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try
+    {
+        file.open(filepath);
+        fileStream << file.rdbuf();
+        file.close();
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    return fileStream.str();
 }
