@@ -1,5 +1,5 @@
 #include "config.h"
-
+// shader sources refactored into main.cpp
 const int WIDTH = 800;
 const int HEIGHT = 600;
 
