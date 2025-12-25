@@ -1,3 +1,3 @@
 to run copy the following command
 
-cd ./build/ && cmake .. && make && ./MyOpenGLProject
+cd ./build/ && cmake .. && make && ./MyOpenGLProject && cd ..
