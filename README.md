@@ -13,7 +13,7 @@
 
 ## before you start reading watch the following youtube video
 
-- [How do Video Game Graphics Work?]( https://www.youtube.com/watch?v=C8YtdC8mxTU)
+- [How do Video Game Graphics Work?](https://www.youtube.com/watch?v=C8YtdC8mxTU)
 
  <div align="center">
 
@@ -23,15 +23,6 @@
 
 </div>
 
-<div align="center">
-
-<a href="https://www.youtube.com/watch?v=C8YtdC8mxTU" target="_blank" rel="noopener noreferrer">
-  <img src="https://img.youtube.com/vi/C8YtdC8mxTU/maxresdefault.jpg" alt="How do Video Game Graphics Work?" width="100%" style="max-width:800px;"/>
-</a>
-
-*Click the image to watch the video (opens in a new tab)*
-
-</div>
 
 # What is opengl
 
@@ -99,6 +90,41 @@ struct OpenGL_Context {
 };
 ```
 
-to run copy the following command
+# Creating a window
 
-cd ./build/ && cmake .. && make && ./MyOpenGLProject && cd ..
+The first thing we need to do before we start creating stunning graphics is to create an OpenGL context and an application window to draw in. However, those operations are specific per operating system and OpenGL purposefully tries to abstract itself from these operations. This means we have to create a window, define a context, and handle user input all by ourselves.
+
+Luckily, there are quite a few libraries out there that provide the functionality we seek, some specifically aimed at OpenGL. Those libraries save us all the operation-system specific work and give us a window and an OpenGL context to render in. Some of the more popular libraries are GLUT, SDL, SFML and GLFW. On LearnOpenGL we will be using GLFW. Feel free to use any of the other libraries, the setup for most is similar to GLFW's setup.
+
+
+
+# GLFW
+
+GLFW is a library, written in C, specifically targeted at OpenGL. GLFW gives us the bare necessities required for rendering goodies to the screen. It allows us to create an OpenGL context, define window parameters, and handle user input, which is plenty enough for our purposes.
+
+The focus of this and the next chapter is to get GLFW up and running, making sure it properly creates an OpenGL context and that it displays a simple window for us to mess around in. This chapter takes a step-by-step approach in retrieving, building and linking the GLFW library.
+
+GLFW can be obtained from their webpage's [download](http://www.glfw.org/download.html) page.
+
+# GLAD
+Because OpenGL is only really a standard/specification it is up to the driver manufacturer to implement the specification to a driver that the specific graphics card supports. Since there are many different versions of OpenGL drivers, the location of most of its functions is not known at compile-time and needs to be queried at run-time. It is then the task of the developer to retrieve the location of the functions he/she needs and store them in function pointers for later use. Retrieving those locations is OS-specific. In Windows it looks something like this:
+
+```c++
+// define the function's prototype
+typedef void (*GL_GENBUFFERS) (GLsizei, GLuint*);
+// find the function and assign it to a function pointer
+GL_GENBUFFERS glGenBuffers  = (GL_GENBUFFERS)wglGetProcAddress("glGenBuffers");
+// function can now be called as normal
+unsigned int buffer;
+glGenBuffers(1, &buffer);
+```
+ As you can see the code looks complex and it's a cumbersome process to do this for each function you may need that is not yet declared. Thankfully, there are libraries for this purpose as well where GLAD is a popular and up-to-date library.
+
+## Setting up GLAD
+GLAD is an [open](https://github.com/Dav1dde/glad) source library that manages all that cumbersome work we talked about. GLAD has a slightly different configuration setup than most common open source libraries. GLAD uses a web service where we can tell GLAD for which version of OpenGL we'd like to define and load all relevant OpenGL functions according to that version.
+
+Go to the GLAD web [service](http://glad.dav1d.de/), make sure the language is set to C++, and in the API section select an OpenGL version of at least 3.3 (which is what we'll be using; higher versions are fine as well). Also make sure the profile is set to Core and that the Generate a loader option is ticked. Ignore the extensions (for now) and click Generate to produce the resulting library files.
+
+GLAD by now should have provided you a zip file containing two include folders, and a single glad.c file. Copy both include folders (glad and KHR) into your include(s) directoy (or add an extra item pointing to these folders), and add the glad.c file to your project.
+
+similar to this project file structure
