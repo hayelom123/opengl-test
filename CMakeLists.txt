@@ -12,7 +12,7 @@ include_directories(${GLFW_DIR}/include)
 link_directories(${GLFW_DIR}/lib)
 
 # Source files
-set(SOURCES src/main.cpp src/glad.c)
+set(SOURCES src/main.cpp src/utils.cpp src/glad.c)
 
 # Find OpenGL
 find_library(OpenGL_LIBRARY OpenGL)
