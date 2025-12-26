@@ -23,6 +23,16 @@
 
 </div>
 
+<div align="center">
+
+<a href="https://www.youtube.com/watch?v=C8YtdC8mxTU" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.youtube.com/vi/C8YtdC8mxTU/maxresdefault.jpg" alt="How do Video Game Graphics Work?" width="100%" style="max-width:800px;"/>
+</a>
+
+*Click the image to watch the video (opens in a new tab)*
+
+</div>
+
 # What is opengl
 
   OpenGL is mainly considered an  _API (an Application Programming Interface)_ that provides us with a large set of functions that we can use to manipulate graphics and images. However, OpenGL by itself is not an API, but merely a _specification_, developed and maintained by the Khronos Group.
