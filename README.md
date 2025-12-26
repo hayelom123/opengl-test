@@ -128,3 +128,13 @@ Go to the GLAD web [service](http://glad.dav1d.de/), make sure the language is s
 GLAD by now should have provided you a zip file containing two include folders, and a single glad.c file. Copy both include folders (glad and KHR) into your include(s) directoy (or add an extra item pointing to these folders), and add the glad.c file to your project.
 
 similar to this project file structure
+
+# Hello Window
+
+Let's see if we can get GLFW up and running. First, create a .cpp file and add the following includes to the top of your newly created file.
+
+```c++
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+```
+[!NOTE]Be sure to include GLAD before GLFW. The include file for GLAD includes the required OpenGL headers behind the scenes (like GL/gl.h) so be sure to include GLAD before other header files that require OpenGL (like GLFW).
