@@ -80,6 +80,7 @@ std::string loadShaderSourceFromFile(const std::string &filepath)
     }
     catch (const std::exception &e)
     {
+        std::cout << "Error loading shader source from file: " << filepath << std::endl;
         std::cerr << e.what() << '\n';
     }
     return fileStream.str();
