@@ -373,6 +373,176 @@ This will clean up all the resources and properly exit the application. Now try 
   It is generally good practice to clean up your resources. As soon as the user exits the game loop you should call <code>glfwTerminate</code> and exit the application.
 </p></p>
 
+## Input
+
+We also want to have some form of input control in GLFW and we can achieve this with several of GLFW's input functions. We'll be using GLFW's glfwGetKey function that takes the window as input together with a key. The function returns whether this key is currently being pressed. We're creating a processInput function to keep all input code organized:
+
+```c++
+void processInput(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
+```
+
+Here we check whether the user has pressed the escape key (if it's not pressed, glfwGetKey returns GLFW_RELEASE). If the user did press the escape key, we close GLFW by setting its WindowShouldClose property to true using glfwSetwindowShouldClose. The next condition check of the main while loop will then fail and the application closes.
+
+We then call processInput every iteration of the render loop:
+
+```c++
+while (!glfwWindowShouldClose(window))
+{
+    processInput(window);
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+}  
+```
+
+This gives us an easy way to check for specific key presses and react accordingly every frame. An iteration of the render loop is more commonly called a frame.
+
+## Rendering
+
+We want to place all the rendering commands in the render loop, since we want to execute all the rendering commands each iteration or frame of the loop. This would look a bit like this:
+
+```c++
+// render loop
+while(!glfwWindowShouldClose(window))
+{
+    // input
+    processInput(window);
+
+    // rendering commands here
+    ...
+
+    // check and call events and swap the buffers
+    glfwPollEvents();
+    glfwSwapBuffers(window);
+}
+```
+<p>
+    Just to test if things actually work we want to clear the screen with a color of our choice. At the start of frame we want to clear the screen. Otherwise we would still see the results from the previous frame (this could be the effect you're looking for, but usually you don't). We can clear the screen's color buffer using <fun><function id="10">glClear</function></fun> where we pass in buffer bits to specify which buffer we would like to clear. The possible bits we can set are <var>GL_COLOR_BUFFER_BIT</var>, <var>GL_DEPTH_BUFFER_BIT</var> and <var>GL_STENCIL_BUFFER_BIT</var>. Right now we only care about the color values so we only clear the color buffer.
+  </p>
+
+  ```c++
+glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+glClear(GL_COLOR_BUFFER_BIT);
+```
+Note that we also specify the color to clear the screen with using glClearColor. Whenever we call glClear and clear the color buffer, the entire color buffer will be filled with the color as configured by glClearColor. This will result in a dark green-blueish color.
+
+<h2>glClearColor</h2>
+<h3>Drawing</h3>
+<p>
+    <code>glClearColor(GLfloat x, GLfloat y, GLfloat z, GLfloat a)</code>
+    sets the color value that OpenGL uses to reset the colorbuffer. As soon as <code>glClear</code>
+    or <code>glClearBuffer</code>
+    is called, it uses the value from <code>glClearColor</code>
+    to reset its color values.
+</p>
+<h2>glClear</h2><h3>Drawing</h3><p><p>
+  	The <fun>glClear</fun> function cleares the entire buffer of the current framebuffer. When specifying the <var>GL_COLOR_BUFFER_BIT</var> the buffer is cleared to the color as specified by <fun>glClearColor</fun>. Other bits to set are <var>GL_DEPTH_BUFFER_BIT</var> to clear the depth buffer and <var>GL_STENCIL_BUFFER_BIT</var> to clear the stencil buffer.
+</p>
+
+<h4>Example usage</h4>
+<pre><code>
+glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);     
+</code></pre></p>
+
+> [!NOTE]
+> As you may recall from the OpenGL chapter, the glClearColor function is a state-setting function and glClear is a state-using function in that it uses the current state to retrieve the clearing color from.
+
+The full source code of the application:
+```c++
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <iostream>
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void processInput(GLFWwindow *window);
+
+// settings
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
+
+int main()
+{
+    // glfw: initialize and configure
+    // ------------------------------
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    // glfw window creation
+    // --------------------
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    if (window == NULL)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    // glad: load all OpenGL function pointers
+    // ---------------------------------------
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return -1;
+    }    
+
+    // render loop
+    // -----------
+    while (!glfwWindowShouldClose(window))
+    {
+        // input
+        // -----
+        processInput(window);
+
+        // render
+        // ------
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+        // -------------------------------------------------------------------------------
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    // glfw: terminate, clearing all previously allocated GLFW resources.
+    // ------------------------------------------------------------------
+    glfwTerminate();
+    return 0;
+}
+
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// ---------------------------------------------------------------------------------------------------------
+void processInput(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
+
+// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+// ---------------------------------------------------------------------------------------------
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    // make sure the viewport matches the new window dimensions; note that width and 
+    // height will be significantly larger than specified on retina displays.
+    glViewport(0, 0, width, height);
+}
+```
+
+
 
 
 
