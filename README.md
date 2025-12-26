@@ -17,7 +17,7 @@
 
  <div align="center">
 
-<a href="https://www.youtube.com/watch?v=C8YtdC8mxTU">
+<a href="https://www.youtube.com/watch?v=C8YtdC8mxTU" target="_blank" rel="noopener noreferrer">
   <img src="https://img.youtube.com/vi/C8YtdC8mxTU/maxresdefault.jpg" alt="Watch the video" width="100%"/>
 </a>
 
