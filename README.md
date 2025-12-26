@@ -139,6 +139,249 @@ Let's see if we can get GLFW up and running. First, create a .cpp file and add t
 ```
 [!NOTE]
 Be sure to include GLAD before GLFW. The include file for GLAD includes the required OpenGL headers behind the scenes (like GL/gl.h) so be sure to include GLAD before other header files that require OpenGL (like GLFW).
-<div class="warning" style='padding:0.1em; background-color:#E9D8FD; color:#69337A'>
- Be sure to include GLAD before GLFW. The include file for GLAD includes the required OpenGL headers behind the scenes (like GL/gl.h) so be sure to include GLAD before other header files that require OpenGL (like GLFW).
-</div>
+
+Next, we create the main function where we will instantiate the GLFW window:
+
+```c++
+int main()
+{
+    glfwInit();
+    // setting up the opnGK version to 3.3
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);// setting major version to 3
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);// minor version .3 
+    // we have set it up to core profile of opengl
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // for mac or apple devices uncomment the following code  
+    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  
+    return 0;
+}
+```
+In the main function we first initialize GLFW with _glfwInit_, after which we can configure GLFW using _glfwWindowHint_. The first argument of glfwWindowHint tells us what option we want to configure, where we can select the option from a large enum of possible options prefixed with GLFW_. The second argument is an integer that sets the value of our option. A list of all the possible options and its corresponding values can be found at GLFW's window handling documentation. If you try to run the application now and it gives a lot of undefined reference errors it means you didn't successfully link the GLFW library.
+
+ <h2>glfwInit</h2><h3>GLFW</h3><p><p>
+  This function initializes the GLFW library. Before most GLFW functions can be used, GLFW must be initialized.</p>
+<p>
+  The function returns <code>GL_TRUE</code> if succesfull, otherwise <code>GL_FALSE</code> is returned when an error occured.
+</p>
+</p>
+
+<h2>glfwWindowHint</h2><h3>GLFW</h3><p><p>
+  This function sets hints for the next call to <code>glfwCreateWindow</code>. The hints, once set, retain their values until changed by a another call to <code>glfwWindowHint</code>.
+</p>
+
+<p>
+  The parameters of <code>glfwWindowHint(int target, int hint)</code> are as follows:
+  <ul>
+    <li><code>target</code>: sets the target/option that we want to change. Targets are set using one of GLFW's enums prefixed with <code>GLFW_</code>.</li>
+    <li><code>hint</code>: the value/hint of the target that we want to set. </li>
+  </ul>
+</p>
+
+<h4>Example usage</h4>
+<pre class="cpp"><code>
+glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);  
+</code></pre></p>
+
+<p>
+  Since the focus of this book is on OpenGL version 3.3 we'd like to tell GLFW that 3.3 is the OpenGL version we want to use. This way GLFW can make the proper arrangements when creating the OpenGL context. This ensures that when a user does not have the proper OpenGL version GLFW fails to run. We set the major and minor version both to <code>3</code>. We also tell GLFW we want to explicitly use the core-profile. Telling GLFW we want to use the core-profile means we'll get access to a smaller subset of OpenGL features without backwards-compatible features we no longer need. Note that on Mac OS X you need to add <code><function id="18">glfwWindowHint</function>(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);</code> to your initialization code for it to work.
+</p>
+
+
+> [!NOTE]  
+> Make sure you have OpenGL versions 3.3 or higher installed on your system/hardware otherwise the application will crash or display
+> undefined behavior. To find the OpenGL version on your machine either call <strong>glxinfo</strong> on Linux machines or use a utility >like the <a href="http://download.cnet.com/OpenGL-Extensions-Viewer/3000-18487_4-34442.html" target="_blank">OpenGL Extension Viewer</a> >for Windows. If your supported version is lower try to check if your video card supports OpenGL 3.3+ (otherwise it's really old) and/or >update your drivers.
+
+Next we're required to create a window object. This window object holds all the windowing data and is required by most of GLFW's other functions.
+
+```c++
+
+GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+if (window == NULL)
+{
+    std::cout << "Failed to create GLFW window" << std::endl;
+    glfwTerminate();
+    return -1;
+}
+glfwMakeContextCurrent(window);
+
+```
+The glfwCreateWindow function requires the window width and height as its first two arguments respectively. The third argument allows us to create a name for the window; for now we call it "LearnOpenGL" but you're allowed to name it however you like. We can ignore the last 2 parameters. The function returns a GLFWwindow object that we'll later need for other GLFW operations. After that we tell GLFW to make the context of our window the main context on the current thread.
+
+<h2>glfwCreateWindow</h2><h3>GLFW</h3><p><p>
+  This function creates a window and its associated context. Most of the options controlling how the window and its context should be created are specified through glfwWindowHint.
+</p>
+
+<p>
+  Successful creation does not change which context is current. Before you can use the newly created context, you need to make it current using glfwMakeContextCurrent.
+</p>
+
+<p>
+  The parameters of <code>glfwCreateWindow(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share )</code> are as follows:
+  <ul>
+    <li><code>width</code>: The desired width, in screen coordinates, of the window.</li>
+    <li><code>height</code>: The desired height, in screen coordinates, of the window.</li>
+    <li><code>title</code>: The initial window title.</li>
+    <li><code>monitor</code>: The monitor to use for full screen mode, or <code>NULL</code> to use windowed mode.</li>
+    <li><code>share</code>: The window whose context to share resources with, or <code>NULL</code> to not share resources.</li>
+  </ul>
+</p>
+
+<p>
+  The function returns a pointer to a <code>GLFWwindow</code> object that is required for other GLFW operations.
+</p>
+
+<h4>Example usage</h4>
+<pre class="cpp"><code>
+GLFWwindow* window;
+window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
+</code></pre></p>
+
+## GLAD
+In the previous chapter we mentioned that GLAD manages function pointers for OpenGL so we want to initialize GLAD before we call any OpenGL function:
+
+```c++
+if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+{
+    std::cout << "Failed to initialize GLAD" << std::endl;
+    return -1;
+} 
+```
+We pass GLAD the function to load the address of the OpenGL function pointers which is OS-specific. GLFW gives us glfwGetProcAddress that defines the correct function based on which OS we're compiling for.
+
+## Viewport
+Before we can start rendering we have to do one last thing. We have to tell OpenGL the size of the rendering window so OpenGL knows how we want to display the data and coordinates with respect to the window. We can set those dimensions via the glViewport function:
+
+```c++
+glViewport(0, 0, 800, 600);
+```
+
+<h2>glViewport</h2><h3>Initialization</h3><p><p>
+  This function specifies the actual window rectangle for your renderings. The function requires 4 coordinates for the left, bottom, right and top coordinate of your viewport rectangle. The coordinates specified tell OpenGL how it should map its <em>normalized device coordinates</em> (in the range -1 to 1) to <em>window coordinates</em> (in the range as specified by the given coordinates).
+</p>
+
+<p>
+  Note that the y-coordinate starts at the bottom of the viewport. If <code>y = 0</code>, it's at the bottom of the viewport.
+</p>
+
+<p>
+  The parameters of <code>glViewport(GLint x, GLint y, GLsizei width, GLsizei height)</code> are as follows:
+  <ul>
+    <li><code>x</code>: The left x-coordinate of the viewport rectangle. </li>
+    <li><code>y</code>: The bottom y-coordinate of the viewport rectangle. </li>
+    <li><code>width</code>: The width of the viewport.</li>
+    <li><code>height</code> The height of the viewport.</li>
+  </ul>
+</p></p>
+
+We could actually set the viewport dimensions at values smaller than GLFW's dimensions; then all the OpenGL rendering would be displayed in a smaller window and we could for example display other elements outside the OpenGL viewport.
+
+> [!NOTE]
+ Behind the scenes OpenGL uses the data specified via <fun><function id="22">glViewport</function></fun> to transform the 2D coordinates it processed to coordinates on your screen. For example, a processed point of location <code>(-0.5,0.5)</code> would (as its final transformation) be mapped to <code>(200,450)</code> in screen coordinates. Note that processed coordinates in OpenGL are between -1 and 1 >so we effectively map from the range (-1 to 1) to (0, 800) and (0, 600).
+
+However, the moment a user resizes the window the viewport should be adjusted as well. We can register a callback function on the window that gets called each time the window is resized. This resize callback function has the following prototype:
+
+<pre><code class=" hljs cpp">
+<span class="hljs-keyword">void</span> framebuffer_size_callback(GLFWwindow* window, <span class="hljs-keyword">int</span> width, <span class="hljs-keyword">int</span> height);  
+</code></pre>
+
+The framebuffer size function takes a GLFWwindow as its first argument and two integers indicating the new window dimensions. Whenever the window changes in size, GLFW calls this function and fills in the proper arguments for you to process.
+
+```c++
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}  
+```
+We do have to tell GLFW we want to call this function on every window resize by registering it:
+
+```c++
+glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
+```
+
+When the window is first displayed framebuffer_size_callback gets called as well with the resulting window dimensions. For retina displays width and height will end up significantly higher than the original input values.
+
+There are many callbacks functions we can set to register our own functions. For example, we can make a callback function to process joystick input changes, process error messages etc. We register the callback functions after we've created the window and before the render loop is initiated.
+
+## Ready your engines
+
+We don't want the application to draw a single image and then immediately quit and close the window. We want the application to keep drawing images and handling user input until the program has been explicitly told to stop. For this reason we have to create a while loop, that we now call the render loop, that keeps on running until we tell GLFW to stop. The following code shows a very simple render loop:
+
+```c++
+while(!glfwWindowShouldClose(window))
+{
+    glfwSwapBuffers(window);
+    glfwPollEvents();    
+}
+```
+
+The glfwWindowShouldClose function checks at the start of each loop iteration if GLFW has been instructed to close. If so, the function returns true and the render loop stops running, after which we can close the application.
+The glfwPollEvents function checks if any events are triggered (like keyboard input or mouse movement events), updates the window state, and calls the corresponding functions (which we can register via callback methods). The glfwSwapBuffers will swap the color buffer (a large 2D buffer that contains color values for each pixel in GLFW's window) that is used to render to during this render iteration and show it as output to the screen.
+
+<h2>glfwWindowShouldClose</h2><h3>GLFW</h3><p><p>
+  <code>GLboolean glfwWindowShouldClose(GLFWwindow* window)</code> takes the window object as its argument and returns <code>GL_TRUE</code> if the window has been instructed to close. The function will thus continously return <code>GL_FALSE</code> until instructed otherwise. 
+</p>
+
+<h4>Example usage</h4>
+<pre><code>
+while(!glfwWindowShouldClose(window))
+{
+  // Poll for events
+  // Render stuff
+  // Swap buffers
+} 
+</code></pre></p>
+
+<h2>glfwPollEvents</h2>
+<h3>GLFW</h3>
+<p>
+<p>This function processes those events that have been received and then returns immediately. Processing events will cause the window and input callbacks associated with those events to be called.
+</p>
+</p>
+
+<h2>glfwSwapBuffers</h2>
+<h3>GLFW</h3>
+<p>
+<p>This function swaps the front and back buffers of the specified window's double-buffer. 
+</p>
+ 
+> [!NOTE]
+>  **Double buffer**
+> 
+> When an application draws in a single buffer the resulting image may display flickering issues. This is because the resulting output image is not drawn in an instant, but drawn pixel by pixel and usually from left to right and top to bottom. Because this image is not displayed at an instant to the user while still being rendered to, the result may contain artifacts. To circumvent these issues, windowing applications apply a double buffer for rendering. The front buffer contains the final output image that is shown at the screen, while all the rendering commands draw to the back buffer. As soon as all the rendering commands are finished we swap the back buffer to the front >buffer so the image can be displayed without still being rendered to, removing all the aforementioned artifacts.
+
+</p>
+
+
+### One last thing
+As soon as we exit the render loop we would like to properly clean/delete all of GLFW's resources that were allocated. We can do this via the ***glfwTerminate*** function that we call at the end of the main function.
+
+```c++
+glfwTerminate();
+return 0;
+```
+
+This will clean up all the resources and properly exit the application. Now try to compile your application and if everything went well you should see the following output:
+
+<h2>glfwTerminate</h2><h3>GLFW</h3><p><p>
+  This function destroys all remaining windows, frees any allocated resources and sets the library to an uninitialized state. Once this is called, you must again call glfwInit successfully before you will be able to use most GLFW functions.
+</p>
+
+<p>
+  It is generally good practice to clean up your resources. As soon as the user exits the game loop you should call <code>glfwTerminate</code> and exit the application.
+</p></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
