@@ -1,5 +1,15 @@
 #include "config.h"
 
+/**
+ * Table of Contents
+ * chapter 1: basic openGL notes
+ * chapter 2: openGL and libraries
+ * chapter 3: Create Window with glfw and load openGL functions with glad
+ * chapter 4: Graphics Pipeline
+ * chapter 5: CPU-GPU communication
+ * chapter 6: Element Buffer Object (EBO) and drawing with indices
+ */
+
 /* chapter 1: basic openGL notes
  *
  * This file contains basic openGL notes
@@ -89,6 +99,196 @@
  * 9. clean up and delete allocated resources
  * 10. terminate glfw using glfwTerminate()
  * 11. exit the program
+ */
+/**
+ * chapter 4: Graphics Pipeline
+ * the graphics pipeline is a conceptual model that describes the sequence
+ * of steps involved in rendering a 3D scene to a 2D screen. it consists of
+ * several stages, each responsible for a specific aspect of the rendering
+ * process. the main stages of the graphics pipeline are:
+ * 1. vertex processing: in this stage, the vertex data (positions, colors,
+ *    texture coordinates, etc.) is processed by the vertex shader. the vertex
+ *    shader transforms the vertex positions from model space to clip space,
+ *    applies any necessary lighting calculations, and passes per-vertex
+ *    attributes to the next stage.
+ * 2. primitive assembly: in this stage, the processed vertices are assembled
+ *    into geometric primitives (points, lines, triangles) based on the
+ *    specified topology. this stage also performs clipping to remove any
+ *    primitives that are outside the view frustum.
+ * 3. rasterization: in this stage, the geometric primitives are converted
+ *    into fragments (potential pixels) based on their coverage of the
+ *    screen. each fragment contains information such as its position, depth,
+ *    and interpolated per-vertex attributes.
+ * 4. fragment processing: in this stage, the fragments are processed by the
+ *    fragment shader. the fragment shader calculates the final color of
+ *    each fragment based on lighting, texture data, and other factors. it
+ *    may also perform operations such as alpha blending and depth testing.
+ * 5. output merger: in this final stage, the processed fragments are merged
+ *    into the framebuffer. this stage handles operations such as depth
+ *    testing, stencil testing, and blending to determine the final color
+ *    of each pixel on the screen.
+ * by understanding the graphics pipeline, developers can gain insight
+ * into how 3D scenes are rendered and how to optimize their applications
+ * for better performance and visual quality.
+ */
+
+/** chapter 5: CPU-GPU communication
+ * opengl is designed to leverage the parallel processing power of modern
+ * graphics processing units (gpus). to achieve this, opengl uses a client-server
+ * model, where the cpu (client) sends commands and data to the gpu (server)
+ * for processing and rendering. this communication between the cpu and gpu is
+ * facilitated through a set of buffers and objects that are managed by opengl.
+ * key concepts:
+ * vertex is a data structure that represents a single point in 3D space, along
+ * with additional attributes such as color, texture coordinates, and normals.
+ * vertices are the building blocks of 3D geometry, and they are used to define
+ * the shape and appearance of objects in a scene.
+ * example: a triangle is defined by three vertices, each with its own position
+ * and color attributes.
+ * buffer is a contiguous block of memory that is used to store data on the gpu.
+ * buffers are used to hold vertex data, index data, texture data, and other
+ * types of information that the gpu needs to render a scene. buffers are created
+ * and managed by opengl, and they can be bound to different targets for
+ * different purposes.
+ * example: a vertex buffer object (vbo) is a type of buffer that holds vertex
+ * data. it can be bound to the gl_array_buffer target, allowing the gpu to
+ * access the vertex data during rendering.
+ * attribute is a variable in a shader program that holds per-vertex data. attributes are used to pass information from the vertex buffer to the vertex shader, allowing the shader to process and transform the vertex data. each attribute has a specific location and data type, and it can be enabled or disabled as needed.
+ * example: a vertex shader may have attributes for position, color, and texture
+ * coordinates. these attributes are populated with data from the vertex buffer
+ * during rendering.
+ * shader is a small program that runs on the gpu and defines how to process
+ * vertex and fragment data. shaders are written in a specialized language
+ * called glsl (openGL shading language) and are compiled and linked into a
+ * shader program that can be used for rendering.
+ * example: a vertex shader may transform vertex positions from model space
+ * to clip space, while a fragment shader may calculate the final color of
+ * each pixel based on lighting and texture data.
+ * draw call is a command sent from the cpu to the gpu to render geometry
+ * using the specified vertex data and shaders. draw calls typically reference
+ * the vertex array objects (vaos) and shader programs to determine how to
+ * process and render the geometry.
+ * example: the glDrawArrays function is a draw call that renders a set of
+ * vertices as a series of primitives (e.g. triangles, lines, points) using
+ * the currently bound vao and shader program.
+ * in summary,
+ * some key concepts related to cpu-gpu communication in opengl include:
+ * - vertex buffer objects (vbos): these are memory buffers that store vertex
+ *   data (e.g. positions, colors, texture coordinates) on the gpu. vbos allow
+ *   for efficient transfer of vertex data from the cpu to the gpu, reducing
+ *   the overhead of sending data for each draw call.
+ * - vertex array objects (vaos): these are objects that encapsulate the state
+ *   needed to specify vertex data for rendering. vaos store the configuration
+ *   of vertex attributes (e.g. which vbos to use, how to interpret the data)
+ *   and allow for easy switching between different vertex data setups.
+ * - shaders: these are small programs that run on the gpu and define how to
+ *   process vertex and fragment data. shaders are written in a specialized
+ *   language called glsl (openGL shading language) and are compiled and linked
+ *   into a shader program that can be used for rendering.
+ * - draw calls: these are commands sent from the cpu to the gpu to render
+ *   geometry using the specified vertex data and shaders. draw calls typically
+ *   reference the vaos and shader programs to determine how to process and
+ *   render the geometry.
+ * by using these concepts and objects, opengl enables efficient communication
+ * between the cpu and gpu, allowing for high-performance rendering of complex
+ * graphics.
+ *
+ * let's expalin these concepts in more detail:
+ * - Vertex Buffer Objects (VBOs):
+ *   VBOs are memory buffers that store vertex data on the GPU. They allow for
+ *   efficient transfer of vertex data from the CPU to the GPU, reducing the
+ *   overhead of sending data for each draw call. VBOs are created and managed
+ *   using OpenGL functions such as glGenBuffers, glBindBuffer, and glBufferData.
+ *   Once a VBO is created and populated with vertex data, it can be bound to
+ *   the GL_ARRAY_BUFFER target, allowing the GPU to access the vertex data
+ *   during rendering.
+ * - Vertex Array Objects (VAOs):
+ *   VAOs are objects that encapsulate the state needed to specify vertex data
+ *   for rendering. They store the configuration of vertex attributes, including
+ *   which VBOs to use and how to interpret the data. VAOs allow for easy switching
+ *   between different vertex data setups, as binding a VAO automatically
+ *   restores the vertex attribute configuration stored in the VAO. VAOs are
+ *   created and managed using OpenGL functions such as glGenVertexArrays,
+ *   glBindVertexArray, glEnableVertexAttribArray, and glVertexAttribPointer.
+ * - Shaders:
+ *   Shaders are small programs that run on the GPU and define how to process
+ *   vertex and fragment data. They are written in GLSL (OpenGL Shading Language)
+ *   and are compiled and linked into a shader program that can be used for rendering.
+ *   Vertex shaders process vertex data, transforming vertex positions and
+ *   passing per-vertex attributes to the fragment shader. Fragment shaders
+ *   calculate the final color of each pixel based on lighting, texture data,
+ *   and other factors. Shaders are created and managed using OpenGL functions
+ *   such as glCreateShader, glShaderSource, glCompileShader, glCreateProgram,
+ *   and glLinkProgram.
+ * - Draw Calls:
+ *   Draw calls are commands sent from the CPU to the GPU to render geometry
+ *   using the specified vertex data and shaders. Draw calls typically reference
+ *   the VAOs and shader programs to determine how to process and render the geometry.
+ *   Common draw call functions include glDrawArrays and glDrawElements, which
+ *   render a set of vertices as a series of primitives (e.g., triangles, lines,
+ *   points) using the currently bound VAO and shader program.
+ *
+ *  by using these concepts and objects, OpenGL enables efficient communication
+ *  between the CPU and GPU, allowing for high-performance rendering of complex
+ *  graphics.
+ */
+/** chapter 6: Element Buffer Object (EBO) and drawing with indices
+ * An Element Buffer Object (EBO), also known as an Index Buffer Object (IBO),
+ * is a type of buffer in OpenGL that stores indices used to specify the order
+ * in which vertices are drawn. EBOs allow you to reuse vertex data by
+ * referencing vertices multiple times through indices, which can help reduce
+ * memory usage and improve rendering performance.
+ * When using an EBO, you typically follow these steps:
+ * 1. Create and bind a Vertex Array Object (VAO) to store the vertex
+ *    attribute configuration.
+ * 2. Create and bind a Vertex Buffer Object (VBO) to store the vertex data.
+ * 3. Create and bind an Element Buffer Object (EBO) to store the index data.
+ * 4. Upload the vertex data to the VBO using glBufferData.
+ * 5. Upload the index data to the EBO using glBufferData.
+ * 6. Configure the vertex attributes using glVertexAttribPointer and
+ *    glEnableVertexAttribArray.
+ * 7. In the render loop, bind the VAO and call glDrawElements to draw the
+ *    geometry using the indices stored in the EBO.
+ * Example:
+ * ```cpp
+ * // Define vertex data
+ * float vertices[] = {
+ *     // positions
+ *     0.5f, 0.5f, 0.0f,   // top right
+ *     0.5f, -0.5f, 0.0f,  // bottom right
+ *     -0.5f, -0.5f, 0.0f, // bottom left
+ *     -0.5f, 0.5f, 0.0f   // top left
+ * };
+ * // Define index data
+ * unsigned int indices[] = {
+ *     0, 1, 3, // first triangle
+ *     1, 2, 3  // second triangle
+ * };
+ * // Create and bind VAO, VBO, and EBO
+ * unsigned int VBO, VAO, EBO;
+ * glGenVertexArrays(1, &VAO);
+ * glGenBuffers(1, &VBO);
+ * glGenBuffers(1, &EBO);
+ * glBindVertexArray(VAO);
+ * glBindBuffer(GL_ARRAY_BUFFER, VBO);
+ * glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+ * glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+ * glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+ * // Configure vertex attributes
+ * glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+ * glEnableVertexAttribArray(0);
+ * // Render loop
+ * while (!glfwWindowShouldClose(window)) {
+ *     // Clear the screen
+ *     glClear(GL_COLOR_BUFFER_BIT);
+ *     // Draw the geometry using the EBO
+ *     glBindVertexArray(VAO);
+ *     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+ *     // Swap buffers and poll events
+ *     glfwSwapBuffers(window);
+ *     glfwPollEvents();
+ * }
+ * ```
  */
 
 /*
