@@ -9,6 +9,19 @@
  * chapter 5: CPU-GPU communication
  * chapter 6: Element Buffer Object (EBO) and drawing with indices
  */
+/**
+ * introduction
+ * OpenGL (Open Graphics Library) is a cross-language, cross-platform
+ * application programming interface (API) for rendering 2D and 3D vector
+ * graphics. it is widely used in computer graphics applications, including
+ * video games, simulations, and scientific visualization. OpenGL provides a
+ * set of functions that allow developers to create and manipulate graphics
+ * objects, apply transformations, and control the rendering process.
+ * It is designed to be hardware-independent, allowing applications to run on
+ * a variety of platforms and devices. OpenGL is maintained by the Khronos
+ * Group, a consortium of companies dedicated to the development of open
+ * standard APIs for graphics and compute.
+ */
 
 /* chapter 1: basic openGL notes
  *
