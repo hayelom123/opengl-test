@@ -1,38 +1,30 @@
-# Chapter 2: OpenGL and Libraries
+# chapter 2: openGL and libraries
 
-OpenGL itself is only a **specification**.  
-It does not provide functionality for:
+opengl itself is just a specification that defines a set of functions
+and behaviors for rendering graphics. however, it does not provide any
+functionality for creating windows, handling input, or loading resources.
 
-- Window creation
-- Input handling
-- Resource loading
+therefore, in order to use openGL in a practical application, you typically
+need to use it in conjunction with other libraries that provide these
+functionalities.
 
-To build real applications, OpenGL is used together with other libraries.
+some common libraries used with openGL include:
 
-## Common OpenGL Libraries
+- glfw: a library for creating windows, handling input, and managing openGL contexts.
 
-### GLFW
+- glad: a library for loading openGL function pointers at runtime.
+  since openGL implementations can vary between different hardware and drivers,
+  glad helps to ensure that your application can access the correct functions for
+  the specific openGL version and extensions supported by the user's system.
 
-- Window creation
-- Input handling
-- OpenGL context management
+- glm: a mathematics library for graphics programming, providing
+  vector and matrix types and operations.
 
-### GLAD
+- assimp: a library for loading 3D models from various file formats.
 
-- Loads OpenGL function pointers at runtime
-- Handles different OpenGL versions and drivers
+- stb_image: a library for loading image files as textures.
 
-### GLM
-
-- Mathematics library
-- Vector and matrix operations
-
-### Assimp
-
-- Loads 3D models from various formats
-
-### stb_image
-
-- Loads image files for textures
-
-These libraries simplify OpenGL development and improve portability.
+these libraries help to simplify the process of using openGL by providing
+higher-level abstractions and utilities for common tasks. they also help to
+ensure that your application is portable across different platforms and
+hardware configurations.

@@ -1,51 +1,58 @@
-# Chapter 5: CPU–GPU Communication
+# chapter 5: CPU-GPU communication
 
-OpenGL uses a client–server model:
+opengl is designed to leverage the parallel processing power of modern
+graphics processing units (gpus). to achieve this, opengl uses a client-server
+model, where the cpu (client) sends commands and data to the gpu (server)
+for processing and rendering.
 
-- CPU sends commands and data
-- GPU executes rendering operations
+this communication between the cpu and gpu is facilitated through a set
+of buffers and objects that are managed by opengl.
 
-## Core Concepts
+key concepts:
 
-### Vertex
+vertex is a data structure that represents a single point in 3D space, along
+with additional attributes such as color, texture coordinates, and normals.
 
-A data structure representing a point in 3D space, including attributes like:
+vertices are the building blocks of 3D geometry, and they are used to define
+the shape and appearance of objects in a scene.
 
-- Position
-- Color
-- Texture coordinates
-- Normals
+example: a triangle is defined by three vertices, each with its own position
+and color attributes.
 
-### Buffer
+buffer is a contiguous block of memory that is used to store data on the gpu.
 
-A contiguous block of GPU memory used to store:
+buffers are used to hold vertex data, index data, texture data, and other
+types of information that the gpu needs to render a scene.
 
-- Vertex data
-- Index data
-- Texture data
+buffers are created and managed by opengl, and they can be bound to different
+targets for different purposes.
 
-### Attribute
+example: a vertex buffer object (vbo) is a type of buffer that holds vertex
+data.
 
-Per-vertex data passed from buffers to shaders.
+it can be bound to the gl_array_buffer target, allowing the gpu to access the
+vertex data during rendering.
 
-### Shader
+attribute is a variable in a shader program that holds per-vertex data.
 
-A small program running on the GPU, written in GLSL.
+attributes are used to pass information from the vertex buffer to the vertex
+shader, allowing the shader to process and transform the vertex data.
 
-- Vertex shader
-- Fragment shader
+each attribute has a specific location and data type, and it can be enabled
+or disabled as needed.
 
-### Draw Call
+example: a vertex shader may have attributes for position, color, and texture
+coordinates.
 
-A command issued by the CPU to render geometry.
-Examples:
+shader is a small program that runs on the gpu and defines how to process
+vertex and fragment data.
 
-- `glDrawArrays`
-- `glDrawElements`
+shaders are written in a specialized language called glsl (openGL shading
+language) and are compiled and linked into a shader program that can be used
+for rendering.
 
-## Key OpenGL Objects
+draw call is a command sent from the cpu to the gpu to render geometry
+using the specified vertex data and shaders.
 
-- **VBO (Vertex Buffer Object)** – stores vertex data
-- **VAO (Vertex Array Object)** – stores vertex attribute configuration
-- **Shaders** – define rendering behavior
-- **Draw Calls** – trigger rendering
+example: glDrawArrays renders a set of vertices as primitives using the
+currently bound vao and shader program.
