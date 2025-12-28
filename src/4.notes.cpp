@@ -303,7 +303,85 @@
  * }
  * ```
  */
+/**
+ *  chapter 7: Hello world Window with OpenGL Context
+  Create a window with an OpenGL context using GLFW and GLAD.
+    1. Initialize GLFW library.
+    2. Set window hints to configure the OpenGL context version and profile.
+    3. Create a window using glfwCreateWindow().
+    4. Make the created window's context current.
+    5. Load OpenGL function pointers using gladLoadGLLoader().
+    6. Set the viewport size and framebuffer size callback.
+    7. In the render loop:
+         a. Process input.
+            b. Clear the screen.
+            c. Draw a triangle.
+            d. Swap buffers and poll events.
+    8. Clean up and delete allocated resources.
+    9. Terminate GLFW and exit the program.
+   full code window with opengl context:
+   ```cpp
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <iostream>
+
+int main()
+{
+    // Initialize GLFW
+    if (!glfwInit())
+    {
+        std::cout << "Failed to initialize GLFW" << std::endl;
+        return -1;
+    }
+    // Set window hints for OpenGL version and profile
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // for macOS
+#endif
+    // Create a windowed mode window and its OpenGL context
+    GLFWwindow *window = glfwCreateWindow(800, 600, "OpenGL Window", nullptr, nullptr);
+    if (!window)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    // Make the window's context current
+    glfwMakeContextCurrent(window);
+    // Load OpenGL function pointers using GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return -1;
+    }
+    // Set the viewport size
+    glViewport(0, 0, 800, 600);
+    // Render loop
+    while (!glfwWindowShouldClose(window))
+    {
+        // Process input
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, true);
+        // Clear the screen
+        glClear(GL_COLOR_BUFFER_BIT);
+        // Draw here (e.g., draw a triangle)
+        // Swap buffers and poll events
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+    // Clean up and delete allocated resources
+    glfwDestroyWindow(window);
+    // Terminate GLFW
+    glfwTerminate();
+    return 0;
+}
+   ```
+
+
+ */
 /*
  * basic openGL program structure
  * 1. initialize openGL context and create a window using a library like glfw
