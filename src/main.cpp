@@ -50,56 +50,26 @@ int main()
         fragmentCode);
 
     float positions[] = {
-        0.3f,
-        0.5f, // 0
+        // Vertical bar
+        -0.2f, 0.9f,  // 0 top-left
+        0.2f, 0.9f,   // 1 top-right
+        0.2f, -0.9f,  // 2 bottom-right
+        -0.2f, -0.9f, // 3 bottom-left
 
-        -0.3f,
-        -0.5f, // 1
-
-        -0.3f,
-        0.3f, // 2
-        // first triangle
-
-        -0.5f,
-        0.3f, // 3
-        -0.5f,
-        -0.3f, // 4
-        -0.3f,
-        -0.3f, // 5
-        -0.3f,
-        -0.8f, // 6
-        0.3f,
-        -0.8f, // 7
-        0.3f,
-        -0.3f, // 8
-        0.5f,
-        -0.3f, // 9
-        0.5f,
-        0.3f, // 10
-        0.3f,
-        0.3f, // 11
-
+        // Horizontal bar
+        -0.6f, 0.4f, // 4 left-top
+        0.6f, 0.4f,  // 5 right-top
+        0.6f, -0.0f, // 6 right-bottom
+        -0.6f, -0.0f // 7 left-bottom
     };
     unsigned int indices[] = {
-        // Top vertical rectangle
-        0, 2, 11,
-        11, 10, 0,
+        // Vertical rectangle
+        0, 1, 2,
+        2, 3, 0,
 
-        // Center vertical rectangle
-        2, 5, 8,
-        8, 11, 2,
-
-        // Bottom vertical rectangle
-        5, 6, 7,
-        7, 8, 5,
-
-        // Left horizontal rectangle
-        3, 2, 5,
-        5, 4, 3,
-
-        // Right horizontal rectangle
-        11, 8, 9,
-        9, 10, 11};
+        // Horizontal rectangle
+        4, 5, 6,
+        6, 7, 4};
 
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
