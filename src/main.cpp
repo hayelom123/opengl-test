@@ -82,7 +82,7 @@ int main()
         vertexCode,
         fragmentCode);
 
-    std::vector<float> circleVertices = generateCircle(0.5f, 50);
+    std::vector<float> circleVertices = generateCircle(0.3f, 50);
 
     GLuint VAO, VBO;
     glGenVertexArrays(1, &VAO);
