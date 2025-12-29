@@ -5,9 +5,12 @@
 #include <cmath>
 
 // draw circle
+int width = 800, height = 600;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
+    width = width;
+    height = height;
     glViewport(0, 0, width, height);
 }
 std::vector<float> generateCircle(float radius, int segments)
@@ -19,10 +22,17 @@ std::vector<float> generateCircle(float radius, int segments)
     vertices.push_back(0.0f);
 
     float pi = 3.1415926f;
+    float aspect = (float)WIDTH / (float)HEIGHT;
+
     for (int i = 0; i <= segments; i++)
     {
-        float theta = 2.0f * pi * float(i) / float(segments);
-        float x = radius * cos(theta);
+        // float theta = 2.0f * pi * float(i) / float(segments);
+        // float x = radius * cos(theta);
+        // float y = radius * sin(theta);
+        // vertices.push_back(x);
+        // vertices.push_back(y);
+        float theta = 2.0f * M_PI * i / segments;
+        float x = radius * cos(theta) / aspect; // scale X by 1/aspect
         float y = radius * sin(theta);
         vertices.push_back(x);
         vertices.push_back(y);
