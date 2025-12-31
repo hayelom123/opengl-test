@@ -13,33 +13,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     height = height;
     glViewport(0, 0, width, height);
 }
-std::vector<float> generateCircle(float radius, int segments)
-{
-    std::vector<float> vertices;
 
-    // Center vertex
-    vertices.push_back(0.0f);
-    vertices.push_back(0.0f);
-
-    float pi = 3.1415926f;
-    float aspect = (float)WIDTH / (float)HEIGHT;
-
-    for (int i = 0; i <= segments; i++)
-    {
-        // float theta = 2.0f * pi * float(i) / float(segments);
-        // float x = radius * cos(theta);
-        // float y = radius * sin(theta);
-        // vertices.push_back(x);
-        // vertices.push_back(y);
-        float theta = 2.0f * M_PI * i / segments;
-        float x = radius * cos(theta) / aspect; // scale X by 1/aspect
-        float y = radius * sin(theta);
-        vertices.push_back(x);
-        vertices.push_back(y);
-    }
-
-    return vertices;
-}
 int main()
 {
 
@@ -81,8 +55,42 @@ int main()
     unsigned int shaderProgram = createShader(
         vertexCode,
         fragmentCode);
+    /*
+      0.0f,0.5f,// Top vertex
+             //\\
+             //  \\
+- 0.5f,0.2f //____\\ 0.5f,0.2f
+             || ||
+-0.4f,-0.5f. ||_||0.4f,-0.5f
+    */
 
-    std::vector<float> circleVertices = generateCircle(0.3f, 50);
+    // drawing tradtional house shape with EBO
+    float vertices[] = {
+        // the first triangle (roof)
+        0.0f,
+        0.8f, // Top vertex
+        -0.5f,
+        0.2f, // bottom-left
+        0.5f,
+        0.2f, // Top-right
+
+        // bottom rectangle
+        -0.4f,
+        0.2f, // left-top
+        -0.4f,
+        -0.5f, // right-bottom
+        0.4f,
+        0.2f, // left-bottom
+
+        -0.4f,
+        -0.5f, // right-bottom
+
+        0.4f,
+        -0.5f,
+        0.4f,
+        0.2f,
+
+    };
 
     GLuint VAO, VBO;
     glGenVertexArrays(1, &VAO);
@@ -90,8 +98,8 @@ int main()
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, circleVertices.size() * sizeof(float),
-                 circleVertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(float),
+                 vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
@@ -103,7 +111,7 @@ int main()
         glUseProgram(shaderProgram);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, circleVertices.size() / 2);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, sizeof(vertices) / (2 * sizeof(float)));
 
         glfwSwapBuffers(window);
         glfwPollEvents();
