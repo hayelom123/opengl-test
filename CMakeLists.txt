@@ -11,6 +11,12 @@ set(GLFW_DIR "/opt/homebrew/opt/glfw") # Intel Macs: "/usr/local/opt/glfw"
 include_directories(${GLFW_DIR}/include)
 link_directories(${GLFW_DIR}/lib)
 
+# GLM
+set(GLM_DIR "/opt/homebrew/opt/glm") # Intel Macs: "/usr/local/opt/glm"
+include_directories(${GLM_DIR}/include) 
+ 
+
+
 # Source files
 set(SOURCES src/main.cpp src/utils.cpp src/glad.c)
 
