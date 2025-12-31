@@ -65,41 +65,66 @@ int main()
     */
 
     // drawing tradtional house shape with EBO
+    // float vertices[] = {
+    //     // the first triangle (roof)
+    //     0.0f,
+    //     0.8f, // Top vertex
+    //     -0.5f,
+    //     0.2f, // bottom-left
+    //     0.5f,
+    //     0.2f, // Top-right
+
+    //     // bottom rectangle
+    //     // left rectangle
+    //     -0.4f,
+    //     0.2f, // left-top
+    //     -0.4f,
+    //     -0.5f, // right-bottom
+    //     0.4f,
+    //     0.2f, // left-bottom
+    //           // right rectangle
+    //     -0.4f,
+    //     -0.5f, // right-bottom
+    //     0.4f,
+    //     -0.5f,
+    //     0.4f,
+    //     0.2f,
+
+    // };
+
+    //
     float vertices[] = {
-        // the first triangle (roof)
-        0.0f,
-        0.8f, // Top vertex
-        -0.5f,
-        0.2f, // bottom-left
-        0.5f,
-        0.2f, // Top-right
+        // x, y
+        0.0f, 0.8f,  // 0 roof top
+        -0.5f, 0.2f, // 1 roof left
+        0.5f, 0.2f,  // 2 roof right
 
-        // bottom rectangle
-        // left rectangle
-        -0.4f,
-        0.2f, // left-top
-        -0.4f,
-        -0.5f, // right-bottom
-        0.4f,
-        0.2f, // left-bottom
-              // right rectangle
-        -0.4f,
-        -0.5f, // right-bottom
-        0.4f,
-        -0.5f,
-        0.4f,
-        0.2f,
-
+        -0.4f, 0.2f, // 3 rect top-left
+        0.4f, 0.2f,  // 4 rect top-right
+        0.4f, -0.5f, // 5 rect bottom-right
+        -0.4f, -0.5f // 6 rect bottom-left
     };
+    unsigned int indices[] = {
+        // roof
+        0, 1, 2,
 
-    GLuint VAO, VBO;
+        // rectangle
+        3, 6, 5,
+        3, 5, 4};
+
+    GLuint VAO, VBO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(float),
                  vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(unsigned int),
+                 indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
@@ -111,7 +136,8 @@ int main()
         glUseProgram(shaderProgram);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, sizeof(vertices) / (2 * sizeof(float)));
+        // glDrawArrays(GL_TRIANGLE_FAN, 0, sizeof(vertices) / (2 * sizeof(float)));
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
