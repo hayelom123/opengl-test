@@ -16,7 +16,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 int main()
 {
-
     glfwInit();
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -27,90 +26,57 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-
+    GLFWwindow *window = glfwCreateWindow(800, 600, "3D House", NULL, NULL);
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
+    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
-    // load shaders
-    std::string vertexShaderPath = "../shaders/triangles/triangle.vert";
-    std::string fragmentShaderPath = "../shaders/triangles/triangle.frag";
+    glEnable(GL_DEPTH_TEST);
 
-    std::string vertexCode = loadShaderSourceFromFile(vertexShaderPath);
-    std::string fragmentCode = loadShaderSourceFromFile(fragmentShaderPath);
-
+    // ===== SHADERS =====
     unsigned int shaderProgram = createShader(
-        vertexCode,
-        fragmentCode);
-    /*
-      0.0f,0.5f,// Top vertex
-             //\\
-             //  \\
-- 0.5f,0.2f //____\\ 0.5f,0.2f
-             || ||
--0.4f,-0.5f. ||_||0.4f,-0.5f
-    */
+        loadShaderSourceFromFile("../shaders/triangles/triangle.vert"),
+        loadShaderSourceFromFile("../shaders/triangles/triangle.frag"));
 
-    // drawing tradtional house shape with EBO
-    // float vertices[] = {
-    //     // the first triangle (roof)
-    //     0.0f,
-    //     0.8f, // Top vertex
-    //     -0.5f,
-    //     0.2f, // bottom-left
-    //     0.5f,
-    //     0.2f, // Top-right
+    float zFront = 0.3f;
+    float zBack = -0.3f;
 
-    //     // bottom rectangle
-    //     // left rectangle
-    //     -0.4f,
-    //     0.2f, // left-top
-    //     -0.4f,
-    //     -0.5f, // right-bottom
-    //     0.4f,
-    //     0.2f, // left-bottom
-    //           // right rectangle
-    //     -0.4f,
-    //     -0.5f, // right-bottom
-    //     0.4f,
-    //     -0.5f,
-    //     0.4f,
-    //     0.2f,
-
-    // };
-
-    //
     float vertices[] = {
-        // x, y
-        0.0f, 0.8f,  // 0 roof top
-        -0.5f, 0.2f, // 1 roof left
-        0.5f, 0.2f,  // 2 roof right
+        // roof front
+        0.0f, 0.8f, zFront,
+        -0.5f, 0.2f, zFront,
+        0.5f, 0.2f, zFront,
 
-        -0.4f, 0.2f, // 3 rect top-left
-        0.4f, 0.2f,  // 4 rect top-right
-        0.4f, -0.5f, // 5 rect bottom-right
-        -0.4f, -0.5f // 6 rect bottom-left
-    };
+        // roof back
+        0.0f, 0.8f, zBack,
+        -0.5f, 0.2f, zBack,
+        0.5f, 0.2f, zBack,
+
+        // body front
+        -0.4f, 0.2f, zFront,
+        0.4f, 0.2f, zFront,
+        0.4f, -0.5f, zFront,
+        -0.4f, -0.5f, zFront,
+
+        // body back
+        -0.4f, 0.2f, zBack,
+        0.4f, 0.2f, zBack,
+        0.4f, -0.5f, zBack,
+        -0.4f, -0.5f, zBack};
+
     unsigned int indices[] = {
         // roof
-        0, 1, 2,
+        0, 1, 2, 3, 5, 4,
+        0, 3, 4, 0, 4, 1,
+        2, 5, 3, 2, 3, 0,
 
-        // rectangle
-        3, 6, 5,
-        3, 5, 4};
+        // body
+        6, 9, 8, 6, 8, 7,
+        10, 11, 12, 10, 12, 13,
+        6, 10, 13, 6, 13, 9,
+        7, 8, 12, 7, 12, 11,
+        6, 7, 11, 6, 11, 10,
+        9, 13, 12, 9, 12, 8};
 
     GLuint VAO, VBO, EBO;
     glGenVertexArrays(1, &VAO);
@@ -118,35 +84,54 @@ int main()
     glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
+
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(float),
-                 vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices) * sizeof(unsigned int),
-                 indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
 
     while (!glfwWindowShouldClose(window))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(shaderProgram);
 
+        // ===== 3D TRANSFORMS =====
+        glm::mat4 model = glm::rotate(
+            glm::mat4(1.0f),
+            (float)glfwGetTime() * 0.6f,
+            glm::vec3(0, 1, 0));
+
+        glm::mat4 view = glm::translate(
+            glm::mat4(1.0f),
+            glm::vec3(0, 0, -2.5f));
+
+        glm::mat4 projection = glm::perspective(
+            glm::radians(45.0f),
+            800.0f / 600.0f,
+            0.1f,
+            100.0f);
+
+        glm::mat4 MVP = projection * view * model;
+
+        glUniformMatrix4fv(
+            glGetUniformLocation(shaderProgram, "MVP"),
+            1, GL_FALSE, glm::value_ptr(MVP));
+
         glBindVertexArray(VAO);
-        // glDrawArrays(GL_TRIANGLE_FAN, 0, sizeof(vertices) / (2 * sizeof(float)));
-        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 60, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
+
 // ----------------------------------------------------------------------
 /**
  * Great question. I’ll explain **Element Buffer Objects (EBOs)** from **zero**, slowly, clearly, and **without assuming any prior knowledge**.
