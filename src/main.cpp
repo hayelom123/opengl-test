@@ -75,16 +75,16 @@ int main()
         0.2f, // Top-right
 
         // bottom rectangle
+        // left rectangle
         -0.4f,
         0.2f, // left-top
         -0.4f,
         -0.5f, // right-bottom
         0.4f,
         0.2f, // left-bottom
-
+              // right rectangle
         -0.4f,
         -0.5f, // right-bottom
-
         0.4f,
         -0.5f,
         0.4f,
