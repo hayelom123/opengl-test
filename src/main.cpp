@@ -41,8 +41,8 @@ int main()
     }
 
     // shader compilation
-    std::string vertexShaderPath = "../shaders/shader-pass/triangle.vert";
-    std::string fragmentShaderPath = "../shaders/shader-pass/triangle.frag";
+    std::string vertexShaderPath = "../shaders/uniforms/triangle.vert";
+    std::string fragmentShaderPath = "../shaders/uniforms/triangle.frag";
 
     std::string vertextShaderSource = loadShaderSourceFromFile(vertexShaderPath);
     std::string fragmentShaderSource = loadShaderSourceFromFile(fragmentShaderPath);
@@ -80,13 +80,22 @@ int main()
         // input
         processInput(window);
         // rendering commands here
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
         glUseProgram(shaderProgram);
+
+        // update the uniform color
+        float timeValue = glfwGetTime();
+        float greenValue = sin(timeValue) / 2.0f + 0.5f;
+        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        glUniform4f(vertexColorLocation, 0.5f, greenValue, 1.0f, 1.0f);
+
+        // render the triangle
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+
         // check and call events and swap the buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
