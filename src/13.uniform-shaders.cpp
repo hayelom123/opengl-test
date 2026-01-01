@@ -41,8 +41,8 @@ int main()
     }
 
     // shader compilation
-    std::string vertexShaderPath = "../shaders/more-attributes/triangle.vert";
-    std::string fragmentShaderPath = "../shaders/more-attributes/triangle.frag";
+    std::string vertexShaderPath = "../shaders/uniforms/triangle.vert";
+    std::string fragmentShaderPath = "../shaders/uniforms/triangle.frag";
 
     std::string vertextShaderSource = loadShaderSourceFromFile(vertexShaderPath);
     std::string fragmentShaderSource = loadShaderSourceFromFile(fragmentShaderPath);
@@ -56,12 +56,11 @@ int main()
     }
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
-
     float vertices[] = {
-        // positions         // colors
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left
-        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f    // top
+        // positions
+        -0.5f, -0.5f, 0.0f, // bottom left
+        0.5f, -0.5f, 0.0f,  // bottom right
+        0.0f, 0.5f, 0.0f    // top
     };
 
     unsigned int VBO, VAO;
@@ -72,15 +71,8 @@ int main()
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
-    // stride is 6 floats (3 position, 3 color)
-    // simply put, it is the space between consecutive vertex attributes
-    // color attribute
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
 
     // render loop
     while (!glfwWindowShouldClose(window))
