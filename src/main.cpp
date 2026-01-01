@@ -76,7 +76,8 @@ int main()
     // position attribute
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
-
+    // stride is 6 floats (3 position, 3 color)
+    // simply put, it is the space between consecutive vertex attributes
     // color attribute
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
