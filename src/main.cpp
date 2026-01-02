@@ -41,8 +41,8 @@ int main()
     }
 
     // shader compilation
-    std::string vertexShaderPath = "../shaders/more-attributes/triangle.vert";
-    std::string fragmentShaderPath = "../shaders/more-attributes/triangle.frag";
+    std::string vertexShaderPath = "../shaders/texture/triangle.vert";
+    std::string fragmentShaderPath = "../shaders/texture/triangle.frag";
 
     std::string vertextShaderSource = loadShaderSourceFromFile(vertexShaderPath);
     std::string fragmentShaderSource = loadShaderSourceFromFile(fragmentShaderPath);
@@ -58,13 +58,16 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
 
     float vertices[] = {
-        // positions         // colors
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left
-        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f    // top
-    };
+        // positions      // tex coords
+        0.5f, 0.5f, 1.0f, 1.0f,
+        0.5f, -0.5f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f,
 
-    unsigned int VBO, VAO;
+        -0.5f, -0.5f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f, 1.0f,
+        0.5f, 0.5f, 1.0f, 1.0f};
+
+     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 
