@@ -19,6 +19,8 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
@@ -97,7 +99,7 @@ int main()
         for (int x = 0; x < TEX_SIZE; x++)
         {
             int checkerValue = ((x / 8) + (y / 8)) % 2;
-            unsigned char color = checkerValue ? 255 : 0;
+            unsigned char color = checkerValue ? 255 : 100;
 
             int index = (y * TEX_SIZE + x) * 3;
             checker[index + 0] = color;
@@ -105,33 +107,59 @@ int main()
             checker[index + 2] = color;
         }
     }
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
 
+    // wraping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method). s axis means x axis of texture
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method). t axis means y axis of texture
+
+    // filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // when texture is scaled down
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // when texture is scaled up
+
+    // load texture data
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TEX_SIZE, TEX_SIZE, 0, GL_RGB, GL_UNSIGNED_BYTE, checker);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    //
+    glUseProgram(shaderProgram);
+    glUniform1i(glGetUniformLocation(shaderProgram, "checkerTex"), 0); // set the texture unit 0 to the sampler2D uniform
+    // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     // render loop
     while (!glfwWindowShouldClose(window))
     {
         // input
         processInput(window);
         // rendering commands here
-        // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
         glUseProgram(shaderProgram);
 
         // update the uniform color
-        float timeValue = glfwGetTime();
-        float greenValue = sin(timeValue) / 2.0f + 0.5f;
-        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-        glUniform4f(vertexColorLocation, 0.5f, greenValue, 1.0f, 1.0f);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
 
         // render the triangle
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // check and call events and swap the buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    // optional: de-allocate all resources once they've outlived their purpose:
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteTextures(1, &texture);
+    glDeleteProgram(shaderProgram);
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
 
     return 0;
 }
