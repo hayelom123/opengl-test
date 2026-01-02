@@ -57,17 +57,18 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
 
+    // ---------- VERTEX DATA ----------
     float vertices[] = {
-        // positions      // tex coords
-        0.5f, 0.5f, 1.0f, 1.0f,
-        0.5f, -0.5f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f,
+        // positions   /*================*///tex coords
+        0.5f, 0.5f, /*================*/1.0f, 1.0f,
+        0.5f, -0.5f, /*================*/1.0f, 0.0f,
+        -0.5f, -0.5f, /*================*/0.0f, 0.0f,
 
-        -0.5f, -0.5f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f, 1.0f,
-        0.5f, 0.5f, 1.0f, 1.0f};
+        -0.5f, -0.5f, /*================*/0.0f, 0.0f,
+        -0.5f, 0.5f, /*================*/0.0f, 1.0f,
+        0.5f, 0.5f, /*================*/1.0f, 1.0f};
 
-     unsigned int VBO, VAO;
+    unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 
@@ -78,12 +79,32 @@ int main()
 
     // position attribute
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
-    // stride is 6 floats (3 position, 3 color)
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
+    // stride is 4 floats (2 position, 2 texture coordinates)
     // simply put, it is the space between consecutive vertex attributes
-    // color attribute
+    // the pointer is offset of the first component
+
+    // texture coordinate attribute
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2 * sizeof(float)));
+
+    // ---------- CHECKERBOARD TEXTURE ----------
+    const int TEX_SIZE = 64;
+    unsigned char checker[TEX_SIZE * TEX_SIZE * 3];
+
+    for (int y = 0; y < TEX_SIZE; y++)
+    {
+        for (int x = 0; x < TEX_SIZE; x++)
+        {
+            int checkerValue = ((x / 8) + (y / 8)) % 2;
+            unsigned char color = checkerValue ? 255 : 0;
+
+            int index = (y * TEX_SIZE + x) * 3;
+            checker[index + 0] = color;
+            checker[index + 1] = color;
+            checker[index + 2] = color;
+        }
+    }
 
     // render loop
     while (!glfwWindowShouldClose(window))
