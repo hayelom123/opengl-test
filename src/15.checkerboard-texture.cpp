@@ -1,5 +1,4 @@
 #include "config.h"
-#include "stb_image.h"
 
 void processInput(GLFWwindow *window)
 {
@@ -91,16 +90,25 @@ int main()
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2 * sizeof(float)));
 
-    // load texture data
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load("./container.jpg", &width, &height, &nrChannels, 0);
-    if (!data)
+    // ---------- CHECKERBOARD TEXTURE ----------
+    const int TEX_SIZE = 64;
+    unsigned char checker[TEX_SIZE * TEX_SIZE * 3];
+
+    for (int y = 0; y < TEX_SIZE; y++)
     {
-        std::cout << "Failed to load texture" << std::endl;
-        return -1;
+        for (int x = 0; x < TEX_SIZE; x++)
+        {
+            int checkerValue = ((x / 8) + (y / 8)) % 2;
+            unsigned char color = checkerValue ? 255 : 100;
+
+            int index = (y * TEX_SIZE + x) * 3;
+            checker[index + 0] = color;
+            checker[index + 1] = color;
+            checker[index + 2] = color;
+        }
     }
 
-    unsigned int texture;
+     unsigned int texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
 
@@ -113,7 +121,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // when texture is scaled up
 
     // load texture data
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TEX_SIZE, TEX_SIZE, 0, GL_RGB, GL_UNSIGNED_BYTE, checker);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     //
