@@ -93,7 +93,7 @@ int main()
 
     // load texture data
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("./container.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load("./textures/wall.jpg", &width, &height, &nrChannels, 0);
     if (!data)
     {
         std::cout << "Failed to load texture" << std::endl;
