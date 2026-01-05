@@ -48,11 +48,7 @@ int main()
     std::string vertexShaderPath = "../shaders/color-texture/triangle.vert";
     std::string fragmentShaderPath = "../shaders/color-texture/triangle.frag";
 
-    // std::string vertextShaderSource = loadShaderSourceFromFile(vertexShaderPath);
-    // std::string fragmentShaderSource = loadShaderSourceFromFile(fragmentShaderPath);
-
     Shader ourShader(vertexShaderPath.c_str(), fragmentShaderPath.c_str());
-    // createShader(vertextShaderSource, fragmentShaderSource);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
 
