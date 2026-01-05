@@ -1,5 +1,6 @@
 #include "config.h"
 #include "stb_image.h"
+#include "shader.h"
 
 void processInput(GLFWwindow *window)
 {
@@ -47,16 +48,11 @@ int main()
     std::string vertexShaderPath = "../shaders/color-texture/triangle.vert";
     std::string fragmentShaderPath = "../shaders/color-texture/triangle.frag";
 
-    std::string vertextShaderSource = loadShaderSourceFromFile(vertexShaderPath);
-    std::string fragmentShaderSource = loadShaderSourceFromFile(fragmentShaderPath);
+    // std::string vertextShaderSource = loadShaderSourceFromFile(vertexShaderPath);
+    // std::string fragmentShaderSource = loadShaderSourceFromFile(fragmentShaderPath);
 
-    int shaderProgram = createShader(vertextShaderSource, fragmentShaderSource);
-
-    if (shaderProgram == 0)
-    {
-        std::cout << "Failed to create shader program" << std::endl;
-        return -1;
-    }
+    Shader ourShader(vertexShaderPath.c_str(), fragmentShaderPath.c_str());
+    // createShader(vertextShaderSource, fragmentShaderSource);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
 
@@ -127,8 +123,9 @@ int main()
     glGenerateMipmap(GL_TEXTURE_2D);
 
     //
-    glUseProgram(shaderProgram);
-    glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"), 0); // set the texture unit 0 to the sampler2D uniform
+    ourShader.use();
+    ourShader.setInt("ourTexture", 0); // don't forget to activate/use the shader before setting uniforms!
+    // glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"), 0); // set the texture unit 0 to the sampler2D uniform
     // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -140,7 +137,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our first triangle
-        glUseProgram(shaderProgram);
+        ourShader.use();
 
         // update the uniform color
         glActiveTexture(GL_TEXTURE0);
@@ -159,7 +156,7 @@ int main()
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteTextures(1, &texture);
-    glDeleteProgram(shaderProgram);
+    ourShader.deleteProgram();
 
     glfwDestroyWindow(window);
     glfwTerminate();
